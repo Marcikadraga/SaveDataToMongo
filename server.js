@@ -44,13 +44,14 @@ app.get("/", function (req, res) {
 console.clear();
 
 
-app.listen(3001, function () {
-    console.log("Server is running on 3001");
+app.listen(3000, function () {
+    console.log("Server is running on 3000");
+    console.log("You are so cool!")
 })
 app.post("/", function (req, res) {
     let newNote = new Note({
-        tite: req.body.title,
-        content: req.body.content
+        tite: req.body.fileName,
+        content: req.body.data
     });
     savethat(req);
 
