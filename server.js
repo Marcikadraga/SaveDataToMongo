@@ -6,14 +6,35 @@ const bodyParser = require("body-parser");
 var path = require('path');
 //static files
 app.use(express.static('public'));
-// app.use( express.static('public'));
-// app.use('/css', express.static(__dirname + 'public/css'));
-// app.use('/js', express.static(__dirname + 'public/js'));
+
+
+const fs = require('fs');
+
+function LoadJSON(filename = '') {
+    return JSON.parse(
+        fs.existsSync(filename)
+            ? fs.readFileSync(filename).toString()
+            : '""'
+    )
+}
+function SaveJSON(filename = '', json = '""') {
+    return fs.writeFileSync(filename, JSON.stringify(json))
+}
+const data = LoadJSON('lofasz.json');
+
+
+
+
+
+
+
+
+
 
 function savethat(value) {
     let obj = {
-        "tite ": value.body.title,
-        "content ": value.body.content
+        "Name": value.body.title,
+        "Data": value.body.content
     }
     let fs = require('fs');
     jsondata = JSON.stringify(obj);
@@ -24,17 +45,14 @@ function savethat(value) {
     })
 }
 
-
-
-
 app.use(bodyParser.urlencoded({ extended: true }));
 
 mongoose.connect("mongodb+srv://marci:mukodj@cluster0.csosw.mongodb.net/notesDB", { useNewUrlParser: true }, { useUnifiedTopology: true })
 console.log(mongoose.connection.readyState)
 var db = mongoose.connection; db.on("error", console.error.bind(console, "connection error:")); db.once("open", function () { console.log("Connection Successful!"); });
 const notesSchema = {
-    tite: String,
-    content: String
+    Name: String,
+    Data: String
 }
 const Note = mongoose.model("Note", notesSchema, "notes");
 
@@ -49,54 +67,38 @@ app.listen(3000, function () {
     console.log("You are so cool!")
 })
 app.post("/", function (req, res) {
+    //DB save
     let newNote = new Note({
-        tite: req.body.fileName,
-        content: req.body.data
+        Name: req.body.fileName,
+        Data: req.body.data
     });
-    savethat(req);
+
+    data.push({
+        "Name": req.body.fileName,
+        "Data": req.body.data,
+    })
+    
+    SaveJSON('lofasz.json', data);
+
+
+
+
+
 
     newNote.save(function (err, doc) {
-
-        //    if (err) return console.error(err); 
+        if (err) return console.error(err);
         console.log("Document inserted succussfully!");
     });
     res.redirect('/');
 })
 
-const fs = require('fs');
-
-function LoadJSON(filename = '') {
-    return JSON.parse(
-        fs.existsSync(filename)
-            ? fs.readFileSync(filename).toString()
-            : '""'
-    )
-}
-function SaveJSON(filename = '', json = '""') {
-    return fs.writeFileSync(filename,
-        JSON.stringify(json))
-}
-const data = LoadJSON('lofasz.json');
-
-// ['d','e','f'].forEach(letter=>data.files.push(letter)
-//     )
 
 
 
-// SaveJSON('lofasz.json', data)
 
-// ////////////////////////////////////////////////////
-// json = {
-//     one: 1,
-//     two: 2
-// }
-// json = JSON.stringify(json);
-// fs.writeFile('./foo.json', json, (err) => {
-//     if (!err) {
-//         console.log('done');
-//     }
-// });
-///////////////////////////////////////////////////
+
+
+
 
 
 
