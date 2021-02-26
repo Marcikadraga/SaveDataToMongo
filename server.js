@@ -6,7 +6,7 @@ const bodyParser = require("body-parser");
 var path = require('path');
 //static files
 app.use(express.static('public'));
-
+app.use('/css',express.static(__dirname +'public/css'))
 
 const fs = require('fs');
 
@@ -20,16 +20,7 @@ function LoadJSON(filename = '') {
 function SaveJSON(filename = '', json = '""') {
     return fs.writeFileSync(filename, JSON.stringify(json))
 }
-const data = LoadJSON('lofasz.json');
-
-
-
-
-
-
-
-
-
+const data = LoadJSON('Data.json');
 
 function savethat(value) {
     let obj = {
@@ -38,7 +29,7 @@ function savethat(value) {
     }
     let fs = require('fs');
     jsondata = JSON.stringify(obj);
-    fs.writeFile("lofasz.json", jsondata, function (err) {
+    fs.writeFile("Data.json", jsondata, function (err) {
         if (err) {
             console.log(err);
         }
@@ -57,7 +48,7 @@ const notesSchema = {
 const Note = mongoose.model("Note", notesSchema, "notes");
 
 app.get("/", function (req, res) {
-    res.sendFile(__dirname + "/index.html");
+    res.sendFile(__dirname + "/public/index.html");
 })
 console.clear();
 
@@ -72,18 +63,13 @@ app.post("/", function (req, res) {
         Name: req.body.fileName,
         Data: req.body.data
     });
-
+    //Json Save
     data.push({
         "Name": req.body.fileName,
         "Data": req.body.data,
     })
-    
-    SaveJSON('lofasz.json', data);
 
-
-
-
-
+    SaveJSON('Data.json', data);
 
     newNote.save(function (err, doc) {
         if (err) return console.error(err);
@@ -91,7 +77,6 @@ app.post("/", function (req, res) {
     });
     res.redirect('/');
 })
-
 
 
 
